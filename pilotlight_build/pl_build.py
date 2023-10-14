@@ -1,4 +1,4 @@
-__version__ = "0.8.1"
+__version__ = "0.8.2"
 
 ###############################################################################
 #                                  Info                                       #
@@ -182,7 +182,7 @@ def project(name: str):
         _context._projects.append(Project(name))
         _context._current_project = _context._projects[-1]
         yield _context._current_project
-    finally: 
+    finally:
         _context._current_project = None
 
 def add_configuration(name: str):
@@ -573,6 +573,7 @@ def register_standard_profiles():
             with compiler("clang", CompilerType.CLANG):
                 add_compiler_flags("-std=c99", "--debug", "-g", "-fmodules", "-ObjC")
                 add_frameworks("Metal", "MetalKit", "Cocoa", "IOKit", "CoreVideo", "QuartzCore")
+                add_linker_flags("-Wl,-rpath,/usr/local/lib")
                 set_output_directory(None)
                 set_output_binary(None)
 
@@ -627,7 +628,7 @@ def _setup_defaults():
         for target in project._targets:
             for config in target._configurations:
                 for plat in config._platforms:
-                    for settings in plat._compiler_settings:   
+                    for settings in plat._compiler_settings:
                         if settings._output_binary_extension is None:
                             if target._target_type == TargetType.STATIC_LIBRARY:
                                 if settings._compiler_type == CompilerType.MSVC:
@@ -790,48 +791,48 @@ def generate_macos_build(name_override=None):
 
                                                 buffer += '# preprocessor defines\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_DEFINES="'    
+                                                    buffer += 'PL_DEFINES="'
                                                     for define in settings._definitions:
                                                         buffer += '-D' + define + " "
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_DEFINES=\n'    
+                                                    buffer += 'PL_DEFINES=\n'
                                                     for define in settings._definitions:
                                                         buffer += 'PL_DEFINES+=" -D' + define + '"\n'
                                                 buffer += '\n'
 
                                                 buffer += '# includes directories\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_INCLUDE_DIRECTORIES="'    
+                                                    buffer += 'PL_INCLUDE_DIRECTORIES="'
                                                     for include in settings._include_directories:
                                                         buffer += '-I' + include + ' '
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_INCLUDE_DIRECTORIES=\n'    
+                                                    buffer += 'PL_INCLUDE_DIRECTORIES=\n'
                                                     for include in settings._include_directories:
                                                         buffer += 'PL_INCLUDE_DIRECTORIES+=" -I' + include + '"\n'
                                                 buffer += '\n'
 
                                                 buffer += '# link directories\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_LINK_DIRECTORIES="'    
+                                                    buffer += 'PL_LINK_DIRECTORIES="'
                                                     for link in settings._link_directories:
                                                         buffer += '-L' + link + ' '
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_LINK_DIRECTORIES=\n'    
+                                                    buffer += 'PL_LINK_DIRECTORIES=\n'
                                                     for link in settings._link_directories:
                                                         buffer += 'PL_LINK_DIRECTORIES+=" -L' + link + '"\n'
                                                 buffer += '\n'
 
                                                 buffer += '# compiler flags\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_COMPILER_FLAGS="'    
+                                                    buffer += 'PL_COMPILER_FLAGS="'
                                                     for flag in settings._compiler_flags:
                                                         buffer += flag + ' '
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_COMPILER_FLAGS=\n'    
+                                                    buffer += 'PL_COMPILER_FLAGS=\n'
                                                     for flag in settings._compiler_flags:
                                                         buffer += 'PL_COMPILER_FLAGS+=" ' + flag + '"\n'
 
@@ -845,36 +846,36 @@ def generate_macos_build(name_override=None):
 
                                                 buffer += '# linker flags\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_LINKER_FLAGS="'    
+                                                    buffer += 'PL_LINKER_FLAGS="'
                                                     for flag in settings._linker_flags:
-                                                        buffer += '-l' + flag + ' '
+                                                        buffer += flag + ' '
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_LINKER_FLAGS=\n'    
+                                                    buffer += 'PL_LINKER_FLAGS=\n'
                                                     for flag in settings._linker_flags:
-                                                        buffer += 'PL_LINKER_FLAGS+=" -l' + flag + '"\n'
+                                                        buffer += 'PL_LINKER_FLAGS+=" ' + flag + '"\n'
                                                 buffer += '\n'
 
                                                 buffer += '# libraries\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_LINK_LIBRARIES="'    
+                                                    buffer += 'PL_LINK_LIBRARIES="'
                                                     for link in settings._link_libraries:
                                                         buffer += '-l ' + link + ' '
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_LINK_LIBRARIES=\n'    
+                                                    buffer += 'PL_LINK_LIBRARIES=\n'
                                                     for link in settings._link_libraries:
                                                         buffer += 'PL_LINK_LIBRARIES+=" -l ' + link + '"\n'
                                                 buffer += '\n'
 
                                                 buffer += '# frameworks\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_LINK_FRAMEWORKS="'    
+                                                    buffer += 'PL_LINK_FRAMEWORKS="'
                                                     for link in settings._link_frameworks:
                                                         buffer += '-framework ' + link + ' '
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_LINK_FRAMEWORKS=\n'    
+                                                    buffer += 'PL_LINK_FRAMEWORKS=\n'
                                                     for link in settings._link_frameworks:
                                                         buffer += 'PL_LINK_FRAMEWORKS+=" -framework ' + link + '"\n'
                                                 buffer += '\n'
@@ -913,12 +914,12 @@ def generate_macos_build(name_override=None):
 
                                                     buffer += '# source files\n'
                                                     if project._collapse:
-                                                        buffer += 'PL_SOURCES="'    
+                                                        buffer += 'PL_SOURCES="'
                                                         for source in settings._source_files:
                                                             buffer += source + ' '
                                                         buffer += '"\n'
                                                     else:
-                                                        buffer += 'PL_SOURCES=\n'    
+                                                        buffer += 'PL_SOURCES=\n'
                                                         for source in settings._source_files:
                                                             buffer += 'PL_SOURCES+=" ' + source + '"\n'
 
@@ -933,12 +934,12 @@ def generate_macos_build(name_override=None):
 
                                                     buffer += '# source files\n'
                                                     if project._collapse:
-                                                        buffer += 'PL_SOURCES="'    
+                                                        buffer += 'PL_SOURCES="'
                                                         for source in settings._source_files:
                                                             buffer += source + ' '
                                                         buffer += '"\n'
                                                     else:
-                                                        buffer += 'PL_SOURCES=\n'    
+                                                        buffer += 'PL_SOURCES=\n'
                                                         for source in settings._source_files:
                                                             buffer += 'PL_SOURCES+=" ' + source + '"\n'
 
@@ -1047,7 +1048,7 @@ def generate_linux_build(name_override=None):
             for register_config in project._registered_configurations:
                 
                 # find main target
-                target_found = False        
+                target_found = False
                 for target in project._targets:
                     if target._name == project._main_target_name:
                         for config in target._configurations:
@@ -1122,72 +1123,72 @@ def generate_linux_build(name_override=None):
 
                                                 buffer += '# preprocessor defines\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_DEFINES="'    
+                                                    buffer += 'PL_DEFINES="'
                                                     for define in settings._definitions:
                                                         buffer += '-D' + define + " "
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_DEFINES=\n'    
+                                                    buffer += 'PL_DEFINES=\n'
                                                     for define in settings._definitions:
                                                         buffer += 'PL_DEFINES+=" -D' + define + '"\n'
                                                 buffer += '\n'
 
                                                 buffer += '# includes directories\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_INCLUDE_DIRECTORIES="'    
+                                                    buffer += 'PL_INCLUDE_DIRECTORIES="'
                                                     for include in settings._include_directories:
                                                         buffer += '-I' + include + ' '
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_INCLUDE_DIRECTORIES=\n'    
+                                                    buffer += 'PL_INCLUDE_DIRECTORIES=\n'
                                                     for include in settings._include_directories:
                                                         buffer += 'PL_INCLUDE_DIRECTORIES+=" -I' + include + '"\n'
                                                 buffer += '\n'
 
                                                 buffer += '# link directories\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_LINK_DIRECTORIES="'    
+                                                    buffer += 'PL_LINK_DIRECTORIES="'
                                                     for link in settings._link_directories:
                                                         buffer += '-L' + link + ' '
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_LINK_DIRECTORIES=\n'    
+                                                    buffer += 'PL_LINK_DIRECTORIES=\n'
                                                     for link in settings._link_directories:
                                                         buffer += 'PL_LINK_DIRECTORIES+=" -L' + link + '"\n'
                                                 buffer += '\n'
 
                                                 buffer += '# compiler flags\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_COMPILER_FLAGS="'    
+                                                    buffer += 'PL_COMPILER_FLAGS="'
                                                     for flag in settings._compiler_flags:
                                                         buffer += flag + ' '
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_COMPILER_FLAGS=\n'    
+                                                    buffer += 'PL_COMPILER_FLAGS=\n'
                                                     for flag in settings._compiler_flags:
                                                         buffer += 'PL_COMPILER_FLAGS+=" ' + flag + '"\n'
                                                 buffer += '\n'
 
                                                 buffer += '# linker flags\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_LINKER_FLAGS="'    
+                                                    buffer += 'PL_LINKER_FLAGS="'
                                                     for flag in settings._linker_flags:
                                                         buffer += '-l' + flag + ' '
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_LINKER_FLAGS=\n'    
+                                                    buffer += 'PL_LINKER_FLAGS=\n'
                                                     for flag in settings._linker_flags:
                                                         buffer += 'PL_LINKER_FLAGS+=" -l' + flag + '"\n'
                                                 buffer += '\n'
 
                                                 buffer += '# libraries\n'
                                                 if project._collapse:
-                                                    buffer += 'PL_LINK_LIBRARIES="'    
+                                                    buffer += 'PL_LINK_LIBRARIES="'
                                                     for link in settings._link_libraries:
                                                         buffer += '-l' + link + ' '
                                                     buffer += '"\n'
                                                 else:
-                                                    buffer += 'PL_LINK_LIBRARIES=\n'    
+                                                    buffer += 'PL_LINK_LIBRARIES=\n'
                                                     for link in settings._link_libraries:
                                                         buffer += 'PL_LINK_LIBRARIES+=" -l' + link + '"\n'
                                                 buffer += '\n'
@@ -1226,12 +1227,12 @@ def generate_linux_build(name_override=None):
 
                                                     buffer += '# source files\n'
                                                     if project._collapse:
-                                                        buffer += 'PL_SOURCES="'    
+                                                        buffer += 'PL_SOURCES="'
                                                         for source in settings._source_files:
                                                             buffer += source + ' '
                                                         buffer += '"\n'
                                                     else:
-                                                        buffer += 'PL_SOURCES=\n'    
+                                                        buffer += 'PL_SOURCES=\n'
                                                         for source in settings._source_files:
                                                             buffer += 'PL_SOURCES+=" ' + source + '"\n'
 
@@ -1244,7 +1245,7 @@ def generate_linux_build(name_override=None):
 
                                                 elif target._target_type == TargetType.EXECUTABLE:
 
-                                                    buffer += 'PL_SOURCES=\n'    
+                                                    buffer += 'PL_SOURCES=\n'
                                                     for source in settings._source_files:
                                                         buffer += 'PL_SOURCES+=" ' + source + '"\n'
 
@@ -1441,17 +1442,17 @@ def generate_win32_build(name_override=None):
                                                     else:
                                                         buffer += '@set PL_DEFINES=\n'
                                                         for define in settings._definitions:
-                                                            buffer += '@set PL_DEFINES=-D' + define + " %PL_DEFINES%\n"               
+                                                            buffer += '@set PL_DEFINES=-D' + define + " %PL_DEFINES%\n"
                                                     buffer += "\n\n"
 
                                                 if settings._include_directories:
                                                     buffer += '@rem include directories\n'
                                                     if project._collapse:
-                                                        buffer += '@set PL_INCLUDE_DIRECTORIES='    
+                                                        buffer += '@set PL_INCLUDE_DIRECTORIES='
                                                         for include in settings._include_directories:
                                                             buffer += '-I"' + include + '" '
                                                     else:
-                                                        buffer += '@set PL_INCLUDE_DIRECTORIES=\n'    
+                                                        buffer += '@set PL_INCLUDE_DIRECTORIES=\n'
                                                         for include in settings._include_directories:
                                                             buffer += '@set PL_INCLUDE_DIRECTORIES=-I"' + include + '" %PL_INCLUDE_DIRECTORIES%\n'
                                                     buffer += "\n\n"
@@ -1459,11 +1460,11 @@ def generate_win32_build(name_override=None):
                                                 if settings._link_directories:
                                                     buffer += '@rem link directories\n'
                                                     if project._collapse:
-                                                        buffer += '@set PL_LINK_DIRECTORIES='    
+                                                        buffer += '@set PL_LINK_DIRECTORIES='
                                                         for link in settings._link_directories:
                                                             buffer += '-LIBPATH:"' + link + '" '
                                                     else:
-                                                        buffer += '@set PL_LINK_DIRECTORIES=\n'    
+                                                        buffer += '@set PL_LINK_DIRECTORIES=\n'
                                                         for link in settings._link_directories:
                                                             buffer += '@set PL_LINK_DIRECTORIES=-LIBPATH:"' + link + '" %PL_LINK_DIRECTORIES%\n'
                                                     buffer += "\n\n"
@@ -1471,11 +1472,11 @@ def generate_win32_build(name_override=None):
                                                 if settings._compiler_flags:
                                                     buffer += '@rem compiler flags\n'
                                                     if project._collapse:
-                                                        buffer += '@set PL_COMPILER_FLAGS='    
+                                                        buffer += '@set PL_COMPILER_FLAGS='
                                                         for flag in settings._compiler_flags:
                                                             buffer += flag + " "
                                                     else:
-                                                        buffer += '@set PL_COMPILER_FLAGS=\n'    
+                                                        buffer += '@set PL_COMPILER_FLAGS=\n'
                                                         for flag in settings._compiler_flags:
                                                             buffer += '@set PL_COMPILER_FLAGS=' + flag + " %PL_COMPILER_FLAGS%\n"
                                                     buffer += "\n\n"
@@ -1487,11 +1488,11 @@ def generate_win32_build(name_override=None):
                                                 if settings._linker_flags:
                                                     buffer += '@rem linker flags\n'
                                                     if project._collapse:
-                                                        buffer += '@set PL_LINKER_FLAGS='    
+                                                        buffer += '@set PL_LINKER_FLAGS='
                                                         for flag in settings._linker_flags:
                                                             buffer += flag + " "
                                                     else:
-                                                        buffer += '@set PL_LINKER_FLAGS=\n'    
+                                                        buffer += '@set PL_LINKER_FLAGS=\n'
                                                         for flag in settings._linker_flags:
                                                             buffer += '@set PL_LINKER_FLAGS=' + flag + " %PL_LINKER_FLAGS%\n"
                                                     buffer += "\n\n"
@@ -1509,11 +1510,11 @@ def generate_win32_build(name_override=None):
                                                 if settings._link_libraries:
                                                     buffer += '@rem libraries to link to\n'
                                                     if project._collapse:
-                                                        buffer += '@set PL_LINK_LIBRARIES='    
+                                                        buffer += '@set PL_LINK_LIBRARIES='
                                                         for link in settings._link_libraries:
                                                             buffer += link + " "
                                                     else:
-                                                        buffer += '@set PL_LINK_LIBRARIES=\n'    
+                                                        buffer += '@set PL_LINK_LIBRARIES=\n'
                                                         for link in settings._link_libraries:
                                                             buffer += '@set PL_LINK_LIBRARIES=' + link + " %PL_LINK_LIBRARIES%\n"
                                                     buffer += "\n"
@@ -1557,11 +1558,11 @@ def generate_win32_build(name_override=None):
 
                                                     buffer += "\n@rem source files\n"
                                                     if project._collapse:
-                                                        buffer += '@set PL_SOURCES='    
+                                                        buffer += '@set PL_SOURCES='
                                                         for source in settings._source_files:
                                                             buffer += '"' + source + '" '
                                                     else:
-                                                        buffer += '@set PL_SOURCES=\n'    
+                                                        buffer += '@set PL_SOURCES=\n'
                                                         for source in settings._source_files:
                                                             buffer += '@set PL_SOURCES="' + source + '" %PL_SOURCES%\n'
                                                     buffer += "\n\n"
@@ -1604,11 +1605,11 @@ def generate_win32_build(name_override=None):
                                                     
                                                     buffer += "\n@rem source files\n"
                                                     if project._collapse:
-                                                        buffer += '@set PL_SOURCES='    
+                                                        buffer += '@set PL_SOURCES='
                                                         for source in settings._source_files:
                                                             buffer += '"' + source + '" '
                                                     else:
-                                                        buffer += '@set PL_SOURCES=\n'    
+                                                        buffer += '@set PL_SOURCES=\n'
                                                         for source in settings._source_files:
                                                             buffer += '@set PL_SOURCES="' + source + '" %PL_SOURCES%\n'
                                                     buffer += "\n\n"
@@ -1636,7 +1637,7 @@ def generate_win32_build(name_override=None):
                                                     buffer += '@echo [1m[36mCompiling and Linking...[0m\n'
 
                                                     buffer += '\n@rem skip actual compilation if hot reloading\n'
-                                                    buffer += '@if %PL_HOT_RELOAD_STATUS% equ 1 ( goto ' + 'Cleanup' + target._name + ' )\n'   
+                                                    buffer += '@if %PL_HOT_RELOAD_STATUS% equ 1 ( goto ' + 'Cleanup' + target._name + ' )\n'
                                                     
                                                     buffer += '\n@rem call compiler\n'
                                                     buffer += 'cl' + sub_buffer0 + ' %PL_SOURCES% -Fe"' + settings._output_directory + '/' + settings._output_binary + settings._output_binary_extension + '" -Fo"' + settings._output_directory + '/" -link' + sub_buffer1 + ' -PDB:"' + settings._output_directory + '/' + settings._output_binary + '_%random%.pdb"' + sub_buffer2 + "\n\n"
@@ -1700,3 +1701,4 @@ def generate_build_script(name_override=None):
         generate_macos_build(name_override)
     elif plat.system() == "Linux":
         generate_linux_build(name_override)
+
