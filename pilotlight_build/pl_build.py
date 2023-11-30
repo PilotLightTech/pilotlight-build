@@ -1,4 +1,4 @@
-__version__ = "0.8.2"
+__version__ = "0.9.0"
 
 ###############################################################################
 #                                  Info                                       #
@@ -68,6 +68,8 @@ class Profile(Enum):
     PILOT_LIGHT_DEBUG = "pilot_light_debug_c"
     PILOT_LIGHT_DEBUG_C = "pilot_light_debug_c"
     PILOT_LIGHT_DEBUG_CPP = "pilot_light_debug_cpp"
+    PILOT_LIGHT_RELEASE_C = "pilot_light_release_c"
+    PILOT_LIGHT_RELEASE_CPP = "pilot_light_release_cpp"
     VULKAN = "vulkan"
 
 
@@ -583,7 +585,7 @@ def register_standard_profiles():
                 add_include_directories('%WindowsSdkDir%Include\\um', '%WindowsSdkDir%Include\\shared')
                 add_compiler_flags("-Zc:preprocessor", "-nologo", "-std:c++17", "-W4", "-WX", "-wd4201", "-wd4100", "-wd4996", "-wd4505", "-wd4189", "-wd5105", "-wd4115", "-permissive-")
                 add_definition("_DEBUG")
-                add_compiler_flags("-Od", "-MDd", "-Zi")
+                add_compiler_flags("-wd4127", "-wd4244", "-wd4305", "-wd4267", "-EHsc", "-Od", "-MDd", "-Zi")
                 set_output_directory(None)
                 set_output_binary(None)
 
@@ -600,6 +602,58 @@ def register_standard_profiles():
         with platform(PlatformType.MACOS):
             with compiler("clang", CompilerType.CLANG):
                 add_compiler_flags("-std=c++17", "--debug", "-g", "-fmodules")
+                add_frameworks("Metal", "MetalKit", "Cocoa", "IOKit", "CoreVideo", "QuartzCore")
+                set_output_directory(None)
+                set_output_binary(None)
+
+    with profile(Profile.PILOT_LIGHT_RELEASE_C.value):
+        with platform(PlatformType.WIN32):
+            with compiler("msvc", CompilerType.MSVC):
+                add_include_directories('%WindowsSdkDir%Include\\um', '%WindowsSdkDir%Include\\shared')
+                add_compiler_flags("-Zc:preprocessor", "-nologo", "-std:c11", "-W4", "-WX", "-wd4201", "-wd4100", "-wd4996", "-wd4505", "-wd4189", "-wd5105", "-wd4115", "-permissive-")
+                add_compiler_flags("-O2", "-MD", "-Zi")
+                set_output_directory(None)
+                set_output_binary(None)
+
+        with platform(PlatformType.LINUX):
+            with compiler("gcc", CompilerType.GCC):
+                add_link_directories("/usr/lib/x86_64-linux-gnu")
+                add_link_libraries("xcb", "X11", "X11-xcb", "xkbcommon", "xcb-cursor", "xcb-xfixes", "xcb-keysyms")
+                add_compiler_flag("-std=gnu99")
+                add_linker_flags("dl", "m")
+                set_output_directory(None)
+                set_output_binary(None)
+
+        with platform(PlatformType.MACOS):
+            with compiler("clang", CompilerType.CLANG):
+                add_compiler_flags("-std=c99", "--debug", "-g", "-fmodules", "-ObjC")
+                add_frameworks("Metal", "MetalKit", "Cocoa", "IOKit", "CoreVideo", "QuartzCore")
+                add_linker_flags("-Wl,-rpath,/usr/local/lib")
+                set_output_directory(None)
+                set_output_binary(None)
+
+    with profile(Profile.PILOT_LIGHT_RELEASE_CPP.value):
+        with platform(PlatformType.WIN32):
+            with compiler("msvc", CompilerType.MSVC):
+                add_include_directories('%WindowsSdkDir%Include\\um', '%WindowsSdkDir%Include\\shared')
+                add_compiler_flags("-Zc:preprocessor", "-nologo", "-std:c++17", "-W4", "-WX", "-wd4201", "-wd4100", "-wd4996", "-wd4505", "-wd4189", "-wd5105", "-wd4115", "-permissive-")
+                add_compiler_flags("-wd4127", "-wd4244", "-wd4305", "-wd4267", "-EHsc", "-O2", "-MD", "-Zi")
+                add_linker_flags("-NODEFAULTLIB:MSVCRT")
+                set_output_directory(None)
+                set_output_binary(None)
+
+        with platform(PlatformType.LINUX):
+            with compiler("gcc", CompilerType.GCC):
+                add_link_directories("/usr/lib/x86_64-linux-gnu")
+                add_link_libraries("xcb", "X11", "X11-xcb", "xkbcommon", "xcb-cursor", "xcb-xfixes")
+                add_compiler_flag("-std=c++17")
+                add_linker_flags("dl", "m")
+                set_output_directory(None)
+                set_output_binary(None)
+
+        with platform(PlatformType.MACOS):
+            with compiler("clang", CompilerType.CLANG):
+                add_compiler_flags("-std=c++17", "-fmodules")
                 add_frameworks("Metal", "MetalKit", "Cocoa", "IOKit", "CoreVideo", "QuartzCore")
                 set_output_directory(None)
                 set_output_binary(None)
