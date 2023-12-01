@@ -1,4 +1,4 @@
-__version__ = "0.9.0"
+__version__ = "0.9.1"
 
 ###############################################################################
 #                                  Info                                       #
@@ -92,6 +92,7 @@ class CompilerSettings:
         self._link_directories = []
         self._source_files = []
         self._vulkan_glsl_shader_files = []
+        self._metal_shader_files = []
         self._link_libraries = []
         self._link_frameworks = []
         self._target_links = []
@@ -113,6 +114,7 @@ class CompilerConfiguration:
 
         # used by profiles
         self._last_source_push_count = []
+        self._last_metal_push_count = []
         self._last_vulkan_glsl_push_count = []
         self._last_definition_push_count = []
         self._last_includes_push_count = []
@@ -287,12 +289,26 @@ def push_vulkan_glsl_files(directory: str, *args):
                 _compiler._vulkan_glsl_shader_files.append([directory, arg])
     _context._profile_stack[0]._last_vulkan_glsl_push_count.append(len(args))
 
+def push_metal_files(directory: str, *args):
+    for _platform in _context._profile_stack[0]._platforms:
+        for _compiler in _platform._compiler_settings:
+            for arg in args:
+                _compiler._metal_shader_files.append([directory, arg])
+    _context._profile_stack[0]._last_metal_push_count.append(len(args))
+
 def pop_vulkan_glsl_files():
     remove_count = _context._profile_stack[0]._last_vulkan_glsl_push_count.pop()
     for _platform in _context._profile_stack[0]._platforms:
         for _compiler in _platform._compiler_settings:
             for i in range(remove_count):
                 _compiler._vulkan_glsl_shader_files.pop()
+
+def pop_metal_files():
+    remove_count = _context._profile_stack[0]._last_metal_push_count.pop()
+    for _platform in _context._profile_stack[0]._platforms:
+        for _compiler in _platform._compiler_settings:
+            for i in range(remove_count):
+                _compiler._metal_shader_files.pop()
 
 def push_definitions(*args):
     for _platform in _context._profile_stack[0]._platforms:
@@ -442,6 +458,13 @@ def add_vulkan_glsl_file(directory: str, file: str):
 def add_vulkan_glsl_files(directory: str, *args):
     for arg in args:
         add_vulkan_glsl_file(directory, arg)
+
+def add_metal_file(directory: str, file: str):
+    _context._current_compiler_settings._metal_shader_files.append([directory, file])
+
+def add_metal_files(directory: str, *args):
+    for arg in args:
+        add_metal_file(directory, arg)
 
 def add_source_file(file: str):
     _context._current_compiler_settings._source_files.append(file)
@@ -1022,6 +1045,15 @@ def generate_macos_build(name_override=None):
                                                     buffer += '\n# compile glsl vulkan shaders\n'
                                                     for vulkan_glsl_shader in settings._vulkan_glsl_shader_files:
                                                         buffer += 'glslc -o' + settings._output_directory + "/" + vulkan_glsl_shader[1] + '.spv ' + vulkan_glsl_shader[0] + vulkan_glsl_shader[1] + '\n'
+
+                                                if settings._metal_shader_files:
+                                                    buffer += '\n\n# cleanup old metal shaders\n'
+                                                    for metal_shader in settings._metal_shader_files:
+                                                        buffer += 'rm -f ./' + settings._output_directory + '/' + metal_shader[1] + '\n'
+
+                                                    buffer += '\n# compile metal shaders\n'
+                                                    for metal_shader in settings._metal_shader_files:
+                                                        buffer += 'cp ' + metal_shader[0] + metal_shader[1] + ' ./' + settings._output_directory + '/' + metal_shader[1] + '\n'
 
                                                 buffer += '\n# remove lock file\n'
                                                 buffer += 'rm "./' + settings._output_directory + '/' + target._lock_file + '"\n\n'
