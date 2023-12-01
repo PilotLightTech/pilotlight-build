@@ -1,4 +1,4 @@
-__version__ = "0.9.1"
+__version__ = "0.9.2"
 
 ###############################################################################
 #                                  Info                                       #
@@ -661,7 +661,6 @@ def register_standard_profiles():
                 add_include_directories('%WindowsSdkDir%Include\\um', '%WindowsSdkDir%Include\\shared')
                 add_compiler_flags("-Zc:preprocessor", "-nologo", "-std:c++17", "-W4", "-WX", "-wd4201", "-wd4100", "-wd4996", "-wd4505", "-wd4189", "-wd5105", "-wd4115", "-permissive-")
                 add_compiler_flags("-wd4127", "-wd4244", "-wd4305", "-wd4267", "-EHsc", "-O2", "-MD", "-Zi")
-                add_linker_flags("-NODEFAULTLIB:MSVCRT")
                 set_output_directory(None)
                 set_output_binary(None)
 
