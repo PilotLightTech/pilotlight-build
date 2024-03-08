@@ -1,4 +1,4 @@
-__version__ = "0.9.2"
+__version__ = "0.9.3"
 
 ###############################################################################
 #                                  Info                                       #
@@ -746,16 +746,16 @@ def generate_macos_build(name_override=None):
             buffer += _title("Development Setup", file_type)
 
             buffer += "\n# colors\n"
-            buffer += "BOLD=$'\e[0;1m'\n"
-            buffer += "RED=$'\e[0;31m'\n"
-            buffer += "RED_BG=$'\e[0;41m'\n"
-            buffer += "GREEN=$'\e[0;32m'\n"
-            buffer += "GREEN_BG=$'\e[0;42m'\n"
-            buffer += "CYAN=$'\e[0;36m'\n"
-            buffer += "MAGENTA=$'\e[0;35m'\n"
-            buffer += "YELLOW=$'\e[0;33m'\n"
-            buffer += "WHITE=$'\e[0;97m'\n"
-            buffer += "NC=$'\e[0m'\n\n"
+            buffer += "BOLD=$'\\e[0;1m'\n"
+            buffer += "RED=$'\\e[0;31m'\n"
+            buffer += "RED_BG=$'\\e[0;41m'\n"
+            buffer += "GREEN=$'\\e[0;32m'\n"
+            buffer += "GREEN_BG=$'\\e[0;42m'\n"
+            buffer += "CYAN=$'\\e[0;36m'\n"
+            buffer += "MAGENTA=$'\\e[0;35m'\n"
+            buffer += "YELLOW=$'\\e[0;33m'\n"
+            buffer += "WHITE=$'\\e[0;97m'\n"
+            buffer += "NC=$'\\e[0m'\n\n"
 
             buffer += '# find directory of this script\n'
             buffer += "SOURCE=${BASH_SOURCE[0]}\n"
@@ -1092,16 +1092,16 @@ def generate_linux_build(name_override=None):
             buffer += _title("Development Setup", file_type)
 
             buffer += "\n# colors\n"
-            buffer += "BOLD=$'\e[0;1m'\n"
-            buffer += "RED=$'\e[0;31m'\n"
-            buffer += "RED_BG=$'\e[0;41m'\n"
-            buffer += "GREEN=$'\e[0;32m'\n"
-            buffer += "GREEN_BG=$'\e[0;42m'\n"
-            buffer += "CYAN=$'\e[0;36m'\n"
-            buffer += "MAGENTA=$'\e[0;35m'\n"
-            buffer += "YELLOW=$'\e[0;33m'\n"
-            buffer += "WHITE=$'\e[0;97m'\n"
-            buffer += "NC=$'\e[0m'\n\n"
+            buffer += "BOLD=$'\\e[0;1m'\n"
+            buffer += "RED=$'\\e[0;31m'\n"
+            buffer += "RED_BG=$'\\e[0;41m'\n"
+            buffer += "GREEN=$'\\e[0;32m'\n"
+            buffer += "GREEN_BG=$'\\e[0;42m'\n"
+            buffer += "CYAN=$'\\e[0;36m'\n"
+            buffer += "MAGENTA=$'\\e[0;35m'\n"
+            buffer += "YELLOW=$'\\e[0;33m'\n"
+            buffer += "WHITE=$'\\e[0;97m'\n"
+            buffer += "NC=$'\\e[0m'\n\n"
 
             buffer += '# find directory of this script\n'
             buffer += "SOURCE=${BASH_SOURCE[0]}\n"
