@@ -1,4 +1,4 @@
-__version__ = "0.9.3"
+__version__ = "0.9.4"
 
 ###############################################################################
 #                                  Info                                       #
@@ -587,7 +587,7 @@ def register_standard_profiles():
         with platform(PlatformType.LINUX):
             with compiler("gcc", CompilerType.GCC):
                 add_link_directories("/usr/lib/x86_64-linux-gnu")
-                add_link_libraries("xcb", "X11", "X11-xcb", "xkbcommon", "xcb-cursor", "xcb-xfixes", "xcb-keysyms")
+                add_link_libraries("xcb", "X11", "X11-xcb", "xkbcommon", "xcb-cursor", "xcb-xfixes", "xcb-keysyms", "pthread")
                 add_compiler_flag("-std=gnu99")
                 add_compiler_flags("--debug", "-g")
                 add_linker_flags("dl", "m")
@@ -615,7 +615,7 @@ def register_standard_profiles():
         with platform(PlatformType.LINUX):
             with compiler("gcc", CompilerType.GCC):
                 add_link_directories("/usr/lib/x86_64-linux-gnu")
-                add_link_libraries("xcb", "X11", "X11-xcb", "xkbcommon", "xcb-cursor", "xcb-xfixes")
+                add_link_libraries("xcb", "X11", "X11-xcb", "xkbcommon", "xcb-cursor", "xcb-xfixes", "pthread")
                 add_compiler_flag("-std=c++17")
                 add_compiler_flags("--debug", "-g")
                 add_linker_flags("dl", "m")
@@ -641,7 +641,7 @@ def register_standard_profiles():
         with platform(PlatformType.LINUX):
             with compiler("gcc", CompilerType.GCC):
                 add_link_directories("/usr/lib/x86_64-linux-gnu")
-                add_link_libraries("xcb", "X11", "X11-xcb", "xkbcommon", "xcb-cursor", "xcb-xfixes", "xcb-keysyms")
+                add_link_libraries("xcb", "X11", "X11-xcb", "xkbcommon", "xcb-cursor", "xcb-xfixes", "xcb-keysyms", "pthread")
                 add_compiler_flag("-std=gnu99")
                 add_linker_flags("dl", "m")
                 set_output_directory(None)
@@ -667,7 +667,7 @@ def register_standard_profiles():
         with platform(PlatformType.LINUX):
             with compiler("gcc", CompilerType.GCC):
                 add_link_directories("/usr/lib/x86_64-linux-gnu")
-                add_link_libraries("xcb", "X11", "X11-xcb", "xkbcommon", "xcb-cursor", "xcb-xfixes")
+                add_link_libraries("xcb", "X11", "X11-xcb", "xkbcommon", "xcb-cursor", "xcb-xfixes", "pthread")
                 add_compiler_flag("-std=c++17")
                 add_linker_flags("dl", "m")
                 set_output_directory(None)
@@ -1786,4 +1786,3 @@ def generate_build_script(name_override=None):
         generate_macos_build(name_override)
     elif plat.system() == "Linux":
         generate_linux_build(name_override)
-
